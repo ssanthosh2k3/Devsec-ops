@@ -9,7 +9,7 @@ function MainLoadingScreen() {
         right: 0,
         bottom: 0,
         display: "flex",
-        justifyContent: "center",
+        justifyContent: "left",
         alignItems: "center",
         position: "fixed",
         backgroundColor: "#141414",
