@@ -8,7 +8,7 @@ function MainLoadingScreen() {
         left: 0,
         right: 0,
         bottom: 0,
-        display: "flex",
+        display: "center",
         justifyContent: "center",
         alignItems: "center",
         position: "fixed",
