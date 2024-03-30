@@ -11,7 +11,7 @@ export default function AgeLimitChip({ sx, ...others }: ChipProps) {
         "& > span": { p: 0 },
         ...sx,
       }}
-      variant="outlined"
+      variant="standard"
     />
   );
 }
