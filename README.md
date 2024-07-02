@@ -14,8 +14,26 @@
   <p align="center">Home Page</p>
 </div>
 
-# **Youtube Video for step by step Demonstration!**
-[![Video Tutorial](https://img.youtube.com/vi/g8X5AoqCJHc/0.jpg)](https://youtu.be/g8X5AoqCJHc)
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/397a5728-8413-44df-b60a-00f1cd10fba7)
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/4238f294-fc02-4fc7-ad04-72464a9faa32)
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/d6db341a-045c-472a-8a5e-df68678d9c30)
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/20738a45-d341-4f0b-8c9b-18fe1003d24a)
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/395078ad-dd9d-4dec-bcf9-b2aa9b3f95d6)
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/8ed04f83-fd4d-4f0c-9626-a976119a3809)
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/2bd27321-5c3a-437d-be99-1d8f178333fc)
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/e1e0840f-1e6a-402b-a5e4-f3e69e5f91a9)
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/599d4f65-e764-4351-91e1-bdf9523fc916)
+## WebApp running in container
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/3754c8a5-e066-4eba-96fb-0bac3b64448e)
+
+
+
+
+
+
+
+
+
 
 # Deploy Netflix Clone on Cloud using Jenkins - DevSecOps Project!
 
