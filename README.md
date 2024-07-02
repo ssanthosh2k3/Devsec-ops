@@ -684,7 +684,7 @@ That's it! You've successfully installed and set up Grafana to work with Prometh
 1. **Implement Notification Services:**
     - Set up email notifications in Jenkins or other notification mechanisms.
     - Update the pipline code like this
-      ```bash
+```bash
       pipeline {
     agent any
     tools {
@@ -780,7 +780,7 @@ That's it! You've successfully installed and set up Grafana to work with Prometh
         }
     }
 }
-      ```
+```
 - Here i attached the mail notification code, just replace your mail id in the place of mine.
 - Change the name of image according to your dockerhub registry name.
 
