@@ -14,13 +14,26 @@
   <p align="center">Home Page</p>
 </div>
 
-# **Youtube Video for step by step Demonstration!**
-[![Video Tutorial](https://img.youtube.com/vi/g8X5AoqCJHc/0.jpg)](https://youtu.be/g8X5AoqCJHc)
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/397a5728-8413-44df-b60a-00f1cd10fba7)
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/4238f294-fc02-4fc7-ad04-72464a9faa32)
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/d6db341a-045c-472a-8a5e-df68678d9c30)
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/20738a45-d341-4f0b-8c9b-18fe1003d24a)
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/395078ad-dd9d-4dec-bcf9-b2aa9b3f95d6)
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/8ed04f83-fd4d-4f0c-9626-a976119a3809)
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/2bd27321-5c3a-437d-be99-1d8f178333fc)
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/e1e0840f-1e6a-402b-a5e4-f3e69e5f91a9)
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/599d4f65-e764-4351-91e1-bdf9523fc916)
+## WebApp running in container
+![image](https://github.com/HitanshuGupta/DevSecOps-Project/assets/72181617/3754c8a5-e066-4eba-96fb-0bac3b64448e)
 
 
-## Susbcribe:
-[https://www.youtube.com/@cloudchamp?
-](https://www.youtube.com/@cloudchamp?sub_confirmation=1)
+
+
+
+
+
+
+
 
 # Deploy Netflix Clone on Cloud using Jenkins - DevSecOps Project!
 
@@ -69,6 +82,7 @@ It will show an error cause you need API key
 
 **Step 4: Get the API Key:**
 
+- You need to fill the form to get the TMDB API Key.
 - Open a web browser and navigate to TMDB (The Movie Database) website.
 - Click on "Login" and create an account.
 - Once logged in, go to your profile and select "Settings."
@@ -247,6 +261,7 @@ Certainly, here are the instructions without step numbers:
 - After installing the Dependency-Check plugin, you need to configure the tool.
 - Go to "Dashboard" → "Manage Jenkins" → "Global Tool Configuration."
 - Find the section for "OWASP Dependency-Check."
+- Here don't keep the version latest, set version approx 8.x.x something otherwise you'll face the slow pipleline build and it will through the error of ```[WARN] An NVD API Key was not provided - it is highly recommended to use an NVD API key as the update can take a VERY long time without an API Key```
 - Add the tool's name, e.g., "DP-Check."
 - Save your settings.
 
@@ -681,9 +696,109 @@ That's it! You've successfully installed and set up Grafana to work with Prometh
 
 1. **Implement Notification Services:**
     - Set up email notifications in Jenkins or other notification mechanisms.
+    - Update the pipline code like this
+```bash
+      pipeline {
+    agent any
+    tools {
+        jdk 'jdk17'
+        nodejs 'node16'
+    }
+    environment {
+        SCANNER_HOME = tool 'sonar-scanner'
+    }
+    stages {
+        stage('Clean Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+        stage('Checkout from Git') {
+            steps {
+                git branch: 'main', url: 'https://github.com/N4si/DevSecOps-Project.git'
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonar-server') {
+                    sh '''
+                        $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Netflix -Dsonar.projectKey=Netflix
+                    '''
+                }
+            }
+        }
+        stage('Quality Gate') {
+            steps {
+                script {
+                    def qg = waitForQualityGate()
+                    if (qg.status != 'OK') {
+                        error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                    }
+                }
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+        stage('OWASP FS Scan') {
+            steps {
+                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
+            }
+        }
+        stage('Publish OWASP Report') {
+            steps {
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+        stage('Trivy FS Scan') {
+            steps {
+                sh 'trivy fs . > trivyfs.txt'
+            }
+        }
+        stage('Docker Build & Push') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {   
+                        sh 'docker build --build-arg TMDB_V3_API_KEY=cb0837f6f332d68bf4418a222bb164c9 -t netflix .'
+                        sh 'docker tag netflix hitanshug/netflix:latest'
+                        sh 'docker push hitanshug/netflix:latest'
+                    }
+                }
+            }
+        }
+        stage('Trivy Image Scan') {
+            steps {
+                sh 'trivy image hitanshug/netflix:latest > trivyimage.txt' 
+            }
+        }
+        stage('Deploy to Container') {
+            steps {
+                sh 'docker run -d -p 8081:80 hitanshug/netflix:latest'
+            }
+        }
+    }
+    post {
+        always {
+            emailext(
+                attachLog: true,
+                subject: "'${currentBuild.result}'",
+                body: """<p>Project: ${env.JOB_NAME}</p>
+                         <p>Build Number: ${env.BUILD_NUMBER}</p>
+                         <p>URL : ${env.BUILD_URL}</p>""",
+                to: 'bittukibaaten@gmail.com',
+                attachmentsPattern: 'trivyfs.txt,trivyimage.txt'
+            )
+        }
+    }
+}
+```
+- Here i attached the mail notification code, just replace your mail id in the place of mine.
+- Change the name of image according to your dockerhub registry name.
 
 # Phase 6: Kubernetes
-
+- ```Note```: Make sure configure the awscli in any cmd of same iam user where you create the eks cluster.
 ## Create Kubernetes Cluster with Nodegroups
 
 In this phase, you'll set up a Kubernetes cluster with node groups. This will provide a scalable environment to deploy and manage your applications.
